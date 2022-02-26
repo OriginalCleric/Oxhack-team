@@ -28,10 +28,30 @@ class HoverableDecorator(BaseElementDecorator):
     def __init__ (self,wrapee):
         self.wrapee=wrapee
         #wrapee.subscribe()
-    
-    def changeColour(self):
+    def mouseMoved(self,mouse):
+        if (self.isInHitBox(mouse)):
+            self.hover(mouse)
+
+    def hover(self,mouse):
+        #TODO
+        self.wrapee.raiseEvent("HOVER")
         pass
 
-class ClickableDecorator(BaseElementDecorator):
-    def activate(self):
+    def isInHitBox(self,mouse):
+        pos = self.wrapee.getPosition()   
+        hitbox = self.wrapee.getHitbox()
+        #TODO     
+        return False
+
+class ClickableDecorator(HoverableDecorator):
+    hovered = False
+    def hover(self):
+        self.wrapee.raiseEvent("CLICKED")
+        self.hover = True
+
+    def mouseClicked(self,mouse):
+        if (self.hovered):
+            self.clicked(mouse)
+
+    def clicked(self,mouse):
         self.wrapee.raiseEvent("CLICKED")

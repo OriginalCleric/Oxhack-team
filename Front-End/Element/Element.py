@@ -1,10 +1,14 @@
 
+from Main import draw
+
+
 class BaseElement:
     backgroundColour = None
     borderColour = None
     scale = None
-    position = [0,0]
+    offset = [0,0]
     visible = True
+    origin = [0,0]
 
     #if this element is supposed to represent an object, this is the tag
     #use this to link the frontend and backend
@@ -30,12 +34,5 @@ class BaseElement:
             self.myEvents[eventName] = []
         self.myEvents[eventName].append(callback)
 
-
-#made up of elements
-class CompositeElement(BaseElement):
-    Elements = []
-
-    def draw(self,timeElapsed):
-        if (self.visible):
-            for e in self.Elements:
-                e.draw(timeElapsed)
+    def getPosition(self):
+        return [self.image,self.offset[0]+self.origin[0], self.offset[1]+self.origin[1]]

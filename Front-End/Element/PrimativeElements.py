@@ -10,7 +10,8 @@ class ImageElement(BaseElement):
 
     def draw(self,timeElapsed):
         if (self.visible):
-            image(self.image,self.position[0],self.position[1])
+            pos = self.getPosition()
+            image(self.image,pos[0],pos[1])
 
     #transform the current element
     def update():
@@ -22,16 +23,21 @@ class SquareElement(BaseElement):
 
     def draw(self,timeElapsed):
         if (self.visible):
+            pos = self.getPosition()
             fill(self.backgroundColour)
-            square(self.position[0], self.position[1], self.size[0])
+            square(pos[0],pos[1],self.size[0])
 
 
 class TextElement(BaseElement):
     size = [10,10]
     fontsize = 10
+    text = ""
 
     def draw(self,timeElapsed):
         pass
+
+    def changeText(self,newText):
+        self.text = newText
 
 
 #animes stuff
