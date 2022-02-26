@@ -25,6 +25,7 @@ class SquareElement(BaseElement):
             fill(self.backgroundColour)
             square(self.position[0], self.position[1], self.size[0])
 
+
 class TextElement(BaseElement):
     size = [10,10]
     fontsize = 10

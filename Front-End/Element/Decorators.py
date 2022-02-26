@@ -33,4 +33,5 @@ class HoverableDecorator(BaseElementDecorator):
         pass
 
 class ClickableDecorator(BaseElementDecorator):
-    pass
+    def activate(self):
+        self.wrapee.raiseEvent("CLICKED")
