@@ -1,12 +1,14 @@
 #various things that processing uses
 
+currentScene = None
+
 #called to set up the canvas
 def setup():
     pass
 
 #processing calls this to draw stuff
 def draw():
-    pass
+    currentScene.draw()
 
 
 #registers user inputs
