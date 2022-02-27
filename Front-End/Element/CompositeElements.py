@@ -4,6 +4,10 @@ from Element import BaseElement
 class CompositeElement(BaseElement):
     Elements = []
 
+    def setOrigin(self,newOrigin):
+        for e in self.Elements:
+            e.setOrigin(self)
+
     def addElement(self,e):
         self.Elements.append(e)
 

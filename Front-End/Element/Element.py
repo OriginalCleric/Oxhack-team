@@ -17,6 +17,9 @@ class BaseElement:
     def draw(self,timeElapsed):
         pass
 
+    def setOrigin(self,newOrigin):
+        self.origin=newOrigin
+
     def getTag(self):
         return self._Tag
     
