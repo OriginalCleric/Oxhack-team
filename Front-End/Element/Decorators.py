@@ -25,17 +25,23 @@ class BaseElementDecorator(BaseElement):
         self.wrapee.subscribe(eventName,callback)
 
 class HoverableDecorator(BaseElementDecorator):
+    hovered = False
     def __init__ (self,wrapee):
         self.wrapee=wrapee
         #wrapee.subscribe()
     def mouseMoved(self,mouse):
         if (self.isInHitBox(mouse)):
             self.hover(mouse)
+        else:
+            self.unhover(mouse)
 
     def hover(self,mouse):
-        #TODO
+        self.hovered = True
         self.wrapee.raiseEvent("HOVER")
-        pass
+
+    def unhover(self,mouse):
+        self.hovered = False
+        self.wrapee.raiseEvent("UNHOVER")
 
     def isInHitBox(self,mouse):
         pos = self.wrapee.getPosition()   
@@ -43,15 +49,70 @@ class HoverableDecorator(BaseElementDecorator):
         #TODO     
         return False
 
-class ClickableDecorator(HoverableDecorator):
-    hovered = False
-    def hover(self):
-        self.wrapee.raiseEvent("CLICKED")
-        self.hover = True
+class PressableDecorator(HoverableDecorator):
+    pressed = False
 
-    def mouseClicked(self,mouse):
+    def hover(self,mouse):
+        self.hovered = True
+
+    def unhover(self,mouse):
+        self.hovered = False
+        if (self.pressed):
+            self.unpress(mouse)
+
+    def mousePress(self,mouse):
         if (self.hovered):
-            self.clicked(mouse)
+            self.press(mouse)
 
+    def mouseRelease(self,mouse):
+        if (self.pressed):
+            self.unpress(mouse)
+
+    def press(self,mouse):
+        self.pressed= True
+        self.wrapee.raiseEvent("PRESSED")
+
+    def unpress(self,mouse):
+        self.pressed = False
+        self.wrapee.raiseEvent("UNPRESSED")
+
+#press and release in hitbox
+class ClickableDecorator(PressableDecorator):
+
+    def press(self,mouse):
+        self.pressed = True
+
+    def unpress(self,mouse):
+        self.pressed = False
+        if (self.hover):
+            self.clicked(mouse)
+        
     def clicked(self,mouse):
         self.wrapee.raiseEvent("CLICKED")
+
+
+#dragging 
+class SlidableDecorator(PressableDecorator):
+    padding = [0,0]
+    def clicked(self,mouse):
+        pass
+
+    def getMin(self):
+        pass
+
+    def getMax(self):
+        pass
+
+    def mouseDragged(self,mouse):
+        pass
+
+    def calculate(self,mouse):
+        pos = self.getPosition()
+        min = [self.padding[0]+pos[0],self.padding[1]+pos[1]]
+        max = []
+        range = [max[0]-min[0],max[1]-min[1]]
+        mouseOriginal = []
+        change = [mouse[0]-mouseOriginal[0],mouse[1]-mouseOriginal[1]]
+        values = [mouse[0]-min[0],mouse[1]-min[1]]
+        ratio = [values[0]/range[0],values[1]/range[1]]
+

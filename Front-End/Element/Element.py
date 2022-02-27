@@ -34,5 +34,6 @@ class BaseElement:
             self.myEvents[eventName] = []
         self.myEvents[eventName].append(callback)
 
+    #calculates absolute position on canvas for rendering
     def getPosition(self):
         return [self.image,self.offset[0]+self.origin[0], self.offset[1]+self.origin[1]]
