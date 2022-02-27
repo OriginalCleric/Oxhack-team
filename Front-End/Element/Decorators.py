@@ -26,9 +26,7 @@ class BaseElementDecorator(BaseElement):
 
 class HoverableDecorator(BaseElementDecorator):
     hovered = False
-    def __init__ (self,wrapee):
-        self.wrapee=wrapee
-        #wrapee.subscribe()
+
     def mouseMoved(self,mouse):
         if (self.isInHitBox(mouse)):
             self.hover(mouse)
@@ -91,28 +89,62 @@ class ClickableDecorator(PressableDecorator):
         self.wrapee.raiseEvent("CLICKED")
 
 
-#dragging 
+#discreet dragging
+#not going to do continous, don't want to keep sending events
 class SlidableDecorator(PressableDecorator):
-    padding = [0,0]
-    def clicked(self,mouse):
-        pass
+    size = [0,0]
+    values = [0,0]
+    changed = False
+    change = [0,0]
+    mouseOriginal = [0,0]
 
-    def getMin(self):
-        pass
+    #there are 10 discreet steps in this slidable
+    ranks = [10,10]
+    steps = [0,0]
 
-    def getMax(self):
-        pass
+    #size indicates the maximum width and height that is slidable from the origin
+    def __init__ (self,wrapee,rank,size):
+        super(wrapee)
+        self.rank = rank
+        self.size = size
+        self.steps = [(1/rank[0])*size[0],(1/rank[1])*size[1]]
+
+    def press(self,mouse):
+        self.pressed = True
+        self.mouseOriginal = [mouse[0],mouse[1]]
+
+    def unpress(self,mouse):
+        self.pressed = False
+        if (self.changed):
+            self.Change()
+
+    def Change(self):
+        self.values = [self.values[0]+self.change[0],self.values[1]+self.change[1]]
+        self.raiseEvent("CHANGEVALUE",self.values)
 
     def mouseDragged(self,mouse):
-        pass
+        if (self.pressed):
+            self.change = self.getChange(mouse)
+            if (self.change[0]!=0 or self.change[1]!=0):
+                self.changed=True
+            else:
+                self.changed=False
 
-    def calculate(self,mouse):
-        pos = self.getPosition()
-        min = [self.padding[0]+pos[0],self.padding[1]+pos[1]]
-        max = []
-        range = [max[0]-min[0],max[1]-min[1]]
-        mouseOriginal = []
-        change = [mouse[0]-mouseOriginal[0],mouse[1]-mouseOriginal[1]]
-        values = [mouse[0]-min[0],mouse[1]-min[1]]
-        ratio = [values[0]/range[0],values[1]/range[1]]
+    def getChange(self,mouse):
+        #change in values
+        change = [mouse[0]-self.mouseOriginal[0],mouse[1]-self.mouseOriginal[1]]
+        stepChange = self.round(change)
+        if (stepChange[0]+self.values[0]>self.ranks[0]):
+            stepChange[0] = self.ranks[0]
+        if (stepChange[1]+self.values[1]>self.ranks[1]):
+            stepChange[1] = self.ranks[1]
+        return stepChange
+
+    #floor round values to the number of steps
+    def round(self,values):
+        return [values[0]//self.steps[0],values[1]//self.steps[1]]
+
+        
+
+
 
